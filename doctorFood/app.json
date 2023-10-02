@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "doctorFood",
+    "name": "Doctor Food",
     "slug": "doctorFood",
     "plugins": [
       [
@@ -28,13 +28,20 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff",
-        "googleServicesFile": "./google-services.json"
-      }
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.evenbees.doctorFood"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "374fb5f3-5c41-466c-8095-8c860bce79a8"
+      }
     }
-    
   }
 }

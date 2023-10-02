@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
+import {  Text, View, Dimensions, TouchableOpacity } from 'react-native'
 import React, { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 import { useNavigation } from '@react-navigation/native';
-const primaryColor = '#0ac4af';
+// const primaryColor = '#0ac4af';
 const secondaryColor = '#0d294f';
 
 import Home from '../Pages/User/Home';
@@ -199,7 +199,7 @@ const AppStack = () => {
     <View style={{ flex: 1 }}>
 
       <Drawer.Navigator initialRouteName="Home"
-        drawerContentOptions={{
+        screenOptions={{
           activeTintColor: '#e91e63',
           itemStyle: {
             marginVertical: 2,
@@ -235,6 +235,7 @@ const AppStack = () => {
               <DrawerItem
                 style={styles.drawerItem}
                 label="Home"
+                key="Home"
                 labelStyle={styles.drawerLabel}
                 icon={({ focused, color, size }) => (
                   <MaterialCommunityIcons
@@ -247,6 +248,7 @@ const AppStack = () => {
               />
               <DrawerItem
                 label="Profile"
+                key = "Profile"
                 labelStyle={styles.drawerLabel}
                 icon={({ focused, color, size }) => (
                   <MaterialCommunityIcons
@@ -259,6 +261,7 @@ const AppStack = () => {
               />
               <DrawerItem
                 label="BMI"
+                key = "BMI"
                 labelStyle={styles.drawerLabel}
                 icon={({ focused, color, size }) => (
                   <MaterialCommunityIcons
@@ -270,7 +273,8 @@ const AppStack = () => {
                 onPress={() => navigation.navigate('BMI')}
               />
               <DrawerItem
-                label="IntakeNote"
+                label="Intake Note"
+                key = "IntakeNote"
                 labelStyle={styles.drawerLabel}
                 icon={({ focused, color, size }) => (
                   <MaterialCommunityIcons
@@ -286,6 +290,7 @@ const AppStack = () => {
                 userInfo.role === 'admin' ? (
                   <DrawerItem
                     label="Admin Board"
+                    key = "Admin"
                     labelStyle={styles.drawerLabel}
                     icon={({ focused, color, size }) => (
                       <MaterialCommunityIcons

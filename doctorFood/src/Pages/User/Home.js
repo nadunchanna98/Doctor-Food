@@ -45,29 +45,6 @@ const Home = () => {
  const [cards, setCards] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
-  // const [cards, setCards] = useState([
-  //   {
-  //     id : 1,
-  //     title: 'Diaberetes',
-  //     subtitle: 'type 1, type 2',
-  //   },
-  //   {
-  //     id : 2,
-  //     title: 'Hypertension',
-  //     subtitle: 'Stage 1, Stage 2',
-  //   },
-  //   {
-  //     id : 3,
-  //     title: 'kidney disease ',
-  //     subtitle: 'frequent urination, blood in urine',
-  //   },
-  //   {
-  //     id : 4,
-  //     title: 'Cardiovascular disease and stroke',
-  //     subtitle: 'chest pain, shortness of breath',
-  //   },
-
-  // ]);
 
   const filteredCards = cards.filter((card) =>
     card.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -95,9 +72,9 @@ const Home = () => {
         />
       </View>
       <View style={styles.searchItems}>
-        {filteredCards.map((card, index) => (
+        {filteredCards.map((card) => (
 
-          <View style={styles.searchItem}>
+          <View style={styles.searchItem} key={card._id} >
             <Card>
               <Card.Cover
                 source={ {uri: card.image} }
@@ -105,7 +82,7 @@ const Home = () => {
 
               />
               <Card.Title
-                key={index}
+                key={card._id}
                 title={card.title}
                 subtitle={card.subtitle}
                 left={(props) => <Avatar.Icon
