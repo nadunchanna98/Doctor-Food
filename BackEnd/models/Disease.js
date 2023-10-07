@@ -38,6 +38,11 @@ const diseaseSchema = mongoose.Schema({
         type: String,
         required: false,
     },
+
+    created :{
+        type: Date,
+        default: Date.now
+    }
 });
 
 exports.Disease = mongoose.model('Disease-Details', diseaseSchema);

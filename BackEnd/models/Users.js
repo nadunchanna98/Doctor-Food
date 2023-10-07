@@ -29,6 +29,32 @@ const UsersSchema = mongoose.Schema({
         type: String,
         required: false,
     },
+    saved: [
+        {
+            item: {
+                type: String,
+                required: false,
+            },
+            createdDate: {
+                type: Date,
+                default: Date.now, 
+            },
+        }
+    ],
+
+    notes: [
+        {
+            content: {
+                type: String,
+                required: false,
+            },
+            createdDate: {
+                type: Date,
+                default: Date.now, 
+        }
+    }
+    ],
+    
     Allergies : [
         {
             type: String,

@@ -1,10 +1,13 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+import React, { useContext } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Dimensions ,ToastAndroid } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-const primaryColor = '#0ac4af';
-
+const primaryColor = '#0d294f';
+import { AuthContext } from '../../components/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 const { width, height } = Dimensions.get('window');
+
+
 
 // Validation schema using Yup
 const validationSchema = yup.object().shape({
@@ -12,13 +15,39 @@ const validationSchema = yup.object().shape({
 });
 
 const ForgotPasswordScreen = ({ navigation }) => {
-  const handleSendCode = (values) => {
-    console.log('Send Code clicked!');
-    console.log('Email:', values.email);
-    // Add your logic to send the code here
 
-    // Navigate to the next screen and share the email address
-    navigation.navigate('CodeEnterScreen', { email: values.email });
+  const { BASE_URL } = useContext(AuthContext);
+
+  const generateRandomCode = () => {
+    const min = 1000;
+    const max = 9999;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+
+  const handleSendCode = async (values) => {
+
+    const code = generateRandomCode(); 
+    console.log('code:', code);
+    // const subject = 'Forgot Password';
+    // const body = `Your forgot password code is: ${code}`;
+    // const recipients = [values.email]; 
+  
+    // // Check if the device supports sending emails
+    // const isAvailable = await MailComposer.isAvailableAsync();
+  
+    // if (isAvailable) {
+    //   await MailComposer.composeAsync({
+    //     recipients,
+    //     subject,
+    //     body,
+    //     isHtml: false,
+    //   });
+    // } else {
+    //   console.log('Email is not available on this device.');
+    // }
+    ToastAndroid.show("Check your email for verification code", ToastAndroid.SHORT);
+    
   };
 
   return (

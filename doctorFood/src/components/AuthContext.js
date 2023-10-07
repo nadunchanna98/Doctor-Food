@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 import BASE_URL from './BaseURL';
 
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -15,6 +16,8 @@ export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
 
   const primaryColor = '#0ac4af';
+
+  
 
 
   const getUserInfo = async (id) => {
@@ -30,6 +33,26 @@ export const AuthProvider = ({ children }) => {
       });
 
   }}
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        }
+        ,
+        {
+          text: "OK", onPress: () => {
+            logout();
+          }
+        }
+      ]
+    );
+  }
+
 
 
   const login = (email, password) => {
@@ -78,8 +101,6 @@ export const AuthProvider = ({ children }) => {
 
 
     AsyncStorage.setItem('userToken', 'fgkj');
-    setIsLoading(false);
-
   };
 
   const logout = () => {
@@ -124,7 +145,7 @@ export const AuthProvider = ({ children }) => {
         data,
         setData,
         login,
-        logout,
+        handleLogout,
         isLoading,
         setIsLoading,
         userToken,
@@ -132,7 +153,8 @@ export const AuthProvider = ({ children }) => {
         userInfo,
         getUserInfo,
         BASE_URL,
-        primaryColor
+        primaryColor,
+        isLoading,
 
       }}
     >

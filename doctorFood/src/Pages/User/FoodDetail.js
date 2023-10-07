@@ -1,21 +1,24 @@
-import { RefreshControl,SafeAreaView, StyleSheet, Text, View, Dimensions, Share, ScrollView,Alert} from 'react-native'
-import React, { useCallback,useEffect, useState, useContext } from 'react';
+import { RefreshControl, SafeAreaView, StyleSheet, Text, View, Dimensions, Share, ScrollView, Alert } from 'react-native'
+import React, { useCallback, useEffect, useState, useContext } from 'react';
 import { SegmentedButtons, Menu, Divider, PaperProvider, Avatar, Button, Card, IconButton, Title } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 const { height, width } = Dimensions.get('window');
 import { AuthContext } from '../../components/AuthContext';
 const secondaryColor = '#0d294f';
+import moment from 'moment';
 
 const FoodDetail = () => {
 
   const id = useRoute().params.id;
-  const { BASE_URL , userInfo } = useContext(AuthContext)
+  const { BASE_URL, userInfo } = useContext(AuthContext)
   const navigation = useNavigation();
   const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => { getCard(); }, []);
+
+  console.log(userInfo)
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -26,21 +29,35 @@ const FoodDetail = () => {
     }, 2000);
   }, [id]);
 
+  const addBookmark = async (id) => {
+    try {
+      axios.post(`${BASE_URL}users/addbookmark/${userInfo._id}`, { CardId: id })
+        .then(function (response) {
+          console.log(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-const confirmDelete = (id) => {
-  Alert.alert(
-    "Delete",
-    "Are you sure you want to delete this disease?",
-    [
-      {
-        text: "Cancel",
-        style: "cancel"
-      },
-      { text: "OK", onPress: () => deleteCard(card._id) }
-    ],
-    { cancelable: false }
-  );
-}
+
+  const confirmDelete = (id) => {
+    Alert.alert(
+      "Delete",
+      "Are you sure you want to delete this disease?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => deleteCard(card._id) }
+      ],
+      { cancelable: false }
+    );
+  }
 
 
   const deleteCard = async (id) => {
@@ -56,14 +73,14 @@ const confirmDelete = (id) => {
 
   const getCard = async () => {
 
-    if  ( id !== undefined){
-    axios.get(`${BASE_URL}diseases/disease/${id}`)
-      .then(function (response) {
-        setCard(response.data.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    if (id !== undefined) {
+      axios.get(`${BASE_URL}diseases/disease/${id}`)
+        .then(function (response) {
+          setCard(response.data.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   };
 
@@ -136,7 +153,7 @@ const confirmDelete = (id) => {
                   {
                     onPress: () => setPage(1),
                     label: 'Details',
-                    icon: 'book-open-variant',   
+                    icon: 'book-open-variant',
                     tintColor: 'red',
                     labelStyle: {
                       color: secondaryColor,
@@ -145,7 +162,7 @@ const confirmDelete = (id) => {
                     iconStyle: {
                       color: secondaryColor,
                     },
-                    checkedColor : secondaryColor,
+                    checkedColor: secondaryColor,
                     accessibilityLabel: 'Details',
                   },
                   {
@@ -156,7 +173,7 @@ const confirmDelete = (id) => {
                       color: secondaryColor,
                       fontSize: width * 0.04,
                     },
-                    checkedColor : secondaryColor,
+                    checkedColor: secondaryColor,
                   },
                   {
                     onPress: () => setPage(3),
@@ -166,10 +183,19 @@ const confirmDelete = (id) => {
                       color: secondaryColor,
                       fontSize: width * 0.04,
                     },
-                    checkedColor : secondaryColor,
+                    checkedColor: secondaryColor,
                   },
                 ]}
+
               />
+
+
+
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: 10 }}>
+
+              </View>
+
+
             </View>
 
 
@@ -192,7 +218,7 @@ const confirmDelete = (id) => {
                     <Title style={{ color: secondaryColor }}>Diagnosis/ Symptoms</Title>
                     <Text variant="titleLarge">{card.symptoms}</Text>
                   </Card.Content>
-                
+
                 </View>
               ) : page === 2 ? (
                 <View>
@@ -206,7 +232,7 @@ const confirmDelete = (id) => {
                     <Title style={{ color: secondaryColor }}>Important Food</Title>
                     <Text variant="titleLarge">{card.important}</Text>
                   </Card.Content>
-                 
+
                 </View>
               ) : page === 3 ? (
                 <View>
@@ -214,15 +240,48 @@ const confirmDelete = (id) => {
                     <Title style={{ color: secondaryColor }}>Recommondation</Title>
                     <Text variant="titleLarge">{card.recommondation}</Text>
                   </Card.Content>
-                 
+
                 </View>
               ) : null
             }
 
+            <Card.Title
+              title={ moment(card.createdAt).format('MMMM Do YYYY, h:mm a')}
+              right={(props) => <IconButton {...props} 
+              icon={
+                Array.isArray(userInfo.saved)
+                  ? userInfo.saved.map((savedId) =>
+                      savedId === card._id ? 'bookmark' : 'bookmark-outline'
+                    ).pop()
+                  : 'bookmark-outline'
+              }
+              size={40} color={secondaryColor}
+                onPress={() => {   
+                  addBookmark(card._id) 
+                }} />}
+
+              titleStyle={{
+                color: secondaryColor,
+                fontSize: width * 0.03,
+                margin: width * 0.02,
+              }}
+              subtitleStyle={{
+                color: secondaryColor,
+                fontSize: width * 0.04,
+                margin: width * 0.02,
+              }}
+              
+              rightStyle={{
+                marginRight: 20,
+                color: secondaryColor,
+                
+              }}
+            />
+
             {
               userInfo.role === 'admin' ? (
                 <Card.Actions>
-                <Button
+                  <Button
                     icon="pencil"
                     mode="outlined"
                     textColor={secondaryColor}
@@ -237,8 +296,8 @@ const confirmDelete = (id) => {
                       alignSelf: 'center',
                     }
                     }
-                    onPress={() => {   navigation.navigate('EditItem', { card: card})}} >Edit</Button>
-                          <Button
+                    onPress={() => { navigation.navigate('EditItem', { card: card }) }} >Edit</Button>
+                  <Button
                     icon="delete"
                     mode="outlined"
                     textColor='red'
@@ -255,17 +314,14 @@ const confirmDelete = (id) => {
                     }
                     onPress={() => {
                       confirmDelete(card._id);
-                    }   } >Delete</Button>
+                    }} >Delete</Button>
                 </Card.Actions>
               ) : null
             }
 
-           
+
 
           </Card>
-
-          
-
 
 
         </View>

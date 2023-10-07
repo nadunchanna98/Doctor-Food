@@ -43,7 +43,7 @@ const UserProfile = () => {
 
 
   const [refreshing, setRefreshing] = useState(false);
-  const { getUserInfo, userInfo, logout } = useContext(AuthContext)
+  const { getUserInfo, userInfo, handleLogout } = useContext(AuthContext)
   const navigation = useNavigation();
 
   var id = userInfo._id
@@ -214,7 +214,7 @@ const UserProfile = () => {
               <Text style={styles.buttonText}>
                 <MaterialCommunityIcons name="account-edit" size={width * 0.06} color="white" />Edit Profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button2} onPress={() => { logout() }}>
+            <TouchableOpacity style={styles.button2} onPress={() => { handleLogout() }}>
               <Text style={styles.buttonText}>
                 <MaterialCommunityIcons name="logout" size={width * 0.05} color="white" />Logout</Text>
             </TouchableOpacity>

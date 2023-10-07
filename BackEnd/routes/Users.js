@@ -107,6 +107,200 @@ router.post('/user/register', async (req, res) => {
     }
   });
 
+  //add bookmark a post into user saved array by id
+  router.post('/addbookmark/:id', async (req, res) => {
+    CardId = req.body.CardId;
+
+console.log(CardId);
+console.log(req.params.id);
+
+    Users.findByIdAndUpdate(req.params.id,
+      { $push: { saved: CardId } },
+      { new: true }
+    )
+      .then((user) => {
+        res.send(user);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while adding bookmark."
+        });
+      });
+  });
+
+  //remove bookmark a post from user saved array by id
+  router.post('/removebookmark/:id', async (req, res) => {
+     
+    CardId = req.body.CardId;
+    Users.findByIdAndUpdate(req.params.id,
+       
+      { $pull: { saved: CardId } },
+      { new: true }
+    )
+      .then((user) => {
+        res.send(user);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while removing bookmark."
+        });
+      });
+  });
+
+  //get saved posts by user id
+  router.get('/saved/:id', async (req, res) => {
+    const  User = await Users.findById(req.params.id);
+
+    if (!User) {
+        return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    res.json({ success: true, data: User.saved });
+
+})
+
+// Update a user's notes by user ID
+// Update a user's notes by user ID
+router.put('/note', async (req, res) => {
+  try {
+      const userId = req.body.user;
+      const newNoteContent = req.body.note;
+
+      // Check if userId is provided and valid
+      if (!userId) {
+          return res.status(400).json({ success: false, message: 'User ID is required.' });
+      }
+
+      // Check if newNoteContent is provided and valid
+      if (!newNoteContent || typeof newNoteContent !== 'string') {
+          return res.status(400).json({ success: false, message: 'Invalid note content.' });
+      }
+
+      const user = await Users.findByIdAndUpdate(
+          userId,
+          {
+              $push: { notes: { content: newNoteContent } },
+          },
+          { new: true }
+      );
+
+      if (!user) {
+          return res.status(404).json({ success: false, message: 'User not found.' });
+      }
+
+      res.json({ success: true, data: user.notes });
+  } catch (error) {
+      console.error('Error updating user notes:', error);
+      res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+});
+
+
+// Get notes by user ID
+router.get('/note/:id', async (req, res) => {
+  try {
+      const user = await Users.findById(req.params.id);
+
+      if (!user) {
+          return res.status(404).json({ success: false, message: 'User not found.' });
+      }
+
+      res.json({ success: true, data: user.notes });
+  } catch (error) {
+      console.error('Error fetching user notes:', error);
+      res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+});
+
+// Delete a user's note by user ID and note ID
+router.delete('/note/:userId/:noteId', async (req, res) => {
+   
+  try {
+      const userId = req.params.userId;
+      const noteId = req.params.noteId;
+
+
+      if (!userId) {
+          return res.status(400).json({ success: false, message: 'User ID is required.' });
+      }
+
+      if (!noteId) {
+          return res.status(400).json({ success: false, message: 'Note ID is required.' });
+      }
+
+      const user = await Users.findByIdAndUpdate(
+
+          userId,
+          {
+              $pull: { notes: { _id: noteId } },
+          },
+          { new: true }
+
+      );
+
+      if (!user) {
+
+          return res.status(404).json({ success: false, message: 'User not found.' });
+
+      }
+
+      res.json({ success: true, data: user.notes });
+
+  } catch (error) {
+
+      console.error('Error deleting user note:', error);
+
+      res.status(500).json({ success: false, message: 'Internal server error.' });
+
+  }
+
+});
+
+
+// edit note by user ID and note ID
+router.put('/editnote', async (req, res) => {
+   
+  try {
+      const userId = req.body.user;
+      const noteId = req.body.noteid;
+      const newNoteContent = req.body.note;
+
+      // Check if userId is provided and valid
+      if (!userId) {
+          return res.status(400).json({ success: false, message: 'User ID is required.' });
+      }
+
+      // Check if newNoteContent is provided and valid
+      if (!newNoteContent || typeof newNoteContent !== 'string') {
+          return res.status(400).json({ success: false, message: 'Invalid note content.' });
+      }
+
+       if (!noteId) {
+          return res.status(400).json({ success: false, message: 'Note ID is required.' });
+
+      } 
+
+      const user = await Users.findOneAndUpdate(
+          { _id: userId, 'notes._id': noteId },
+          { $set: { 'notes.$.content': newNoteContent } },
+          { new: true }
+      );
+
+      if (!user) {
+          return res.status(404).json({ success: false, message: 'User not found.' });
+      }
+
+      res.json({ success: true, data: user.notes });
+  } catch (error) {
+      console.error('Error updating user notes:', error);
+      res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+});
+
+
+  
+
+
 // // Get all users 
 // router.get(`/token/`, async (req, res) => {
 

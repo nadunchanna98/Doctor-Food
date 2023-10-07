@@ -7,7 +7,7 @@ const { width, height } = Dimensions.get('window');
 import axios from 'axios';
 import BASE_URL from '../../components/BaseURL';
 import moment from 'moment';
-const primaryColor = '#0ac4af';
+const primaryColor = '#0d294f';
 
 const validationSchema = yup.object().shape({
     name: yup.string().required('Name is required'),

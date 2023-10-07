@@ -1,4 +1,4 @@
-import {  Text, View, Dimensions, TouchableOpacity } from 'react-native'
+import { Text, View, Dimensions, TouchableOpacity, Alert, Share } from 'react-native'
 import React, { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
@@ -9,6 +9,7 @@ const Stack = createStackNavigator();
 import { useNavigation } from '@react-navigation/native';
 // const primaryColor = '#0ac4af';
 const secondaryColor = '#0d294f';
+const tertiaryColor = '#1b3557';
 
 import Home from '../Pages/User/Home';
 import Profile from '../Pages/User/Profile';
@@ -18,6 +19,9 @@ import AddItem from '../Pages/Admin/AddItem';
 import AdminDashboard from '../Pages/Admin/AdminDashboard';
 import FoodDetail from '../Pages/User/FoodDetail';
 import EditItem from '../Pages/Admin/EditItem';
+import Saved from '../Pages/User/Saved';
+import AddNote from '../Pages/User/AddNote';
+import EditNote from '../Pages/User/EditNote';
 
 
 const CustomHeader = ({ navigation, title }) => (
@@ -97,70 +101,67 @@ const HomeScreens = ({ }) => (
       })}
     />
 
-  </Stack.Navigator>
+    <Stack.Screen
+      name="BMI"
+      component={BMI}
+      initialParams={{ title: 'BMI Calculater' }}
+      options={({ route, navigation }) => ({
+        header: (props) => <InsideHeader {...props} title={route.params?.title || 'BMI Calculater'} />,
+      })}
+    />
 
-
-);
-
-const IntakeNoteSceen = ({ }) => (
-
-  <Stack.Navigator
-    screenOptions={{
-      header: ({ route, navigation }) => (
-        <CustomHeader navigation={navigation} title={route.params?.title || 'IntakeNote'} />
-      ),
-    }}
-
-  >
     <Stack.Screen
       name="IntakeNote"
       component={IntakeNote}
-      initialParams={{ title: 'IntakeNote' }}
+      initialParams={{ title: 'Intake Notes' }}
+      options={({ route, navigation }) => ({
+        header: (props) => <InsideHeader {...props} title={route.params?.title || 'IntakeNote'} />,
+      })}
     />
 
-  </Stack.Navigator>
+    <Stack.Screen
+      name="Saved"
+      component={Saved}
+      initialParams={{ title: 'Saved Notes' }}
+      options={({ route, navigation }) => ({
+        header: (props) => <InsideHeader {...props} title={route.params?.title || 'Saved'} />,
+      })}
+    />
 
-);
-
-const ProfileScreens = ({ }) => (
-
-  <Stack.Navigator
-    screenOptions={{
-      header: ({ route, navigation }) => (
-        <CustomHeader navigation={navigation} title={route.params?.title || 'Profile'} />
-      ),
-    }}
-
-  >
     <Stack.Screen
       name="Profile"
       component={Profile}
       initialParams={{ title: 'Profile' }}
+      options={({ route, navigation }) => ({
+        header: (props) => <InsideHeader {...props} title={route.params?.title || 'Profile'} />,
+      })}
     />
 
-  </Stack.Navigator>
-
-);
-
-const BMISceeens = ({ }) => (
-
-  <Stack.Navigator
-    screenOptions={{
-      header: ({ route, navigation }) => (
-        <CustomHeader navigation={navigation} title={route.params?.title || 'BMI'} />
-      ),
-    }}
-
-  >
     <Stack.Screen
-      name="BMI"
-      component={BMI}
-      initialParams={{ title: 'BMI' }}
+      name="AddNote"
+      component={AddNote}
+      initialParams={{ title: 'Add Note' }}
+      options={({ route, navigation }) => ({
+        header: (props) => <InsideHeader {...props} title={route.params?.title || 'AddNote'} />,
+      })}
     />
+
+    <Stack.Screen
+      name="EditNote"
+      component={EditNote}
+      initialParams={{ title: 'Edit Note' }}
+      options={({ route, navigation }) => ({
+        header: (props) => <InsideHeader {...props} title={route.params?.title || 'EditNote'} />,
+      })}
+    />
+
+
 
   </Stack.Navigator>
 
+
 );
+
 
 const AdminScreens = ({ }) => (
 
@@ -191,7 +192,7 @@ const AdminScreens = ({ }) => (
 const AppStack = () => {
 
   const [active, setActive] = React.useState('');
-  const { userInfo, logout } = useContext(AuthContext)
+  const { userInfo, handleLogout } = useContext(AuthContext)
   const navigation = useNavigation();
 
   return (
@@ -214,8 +215,12 @@ const AppStack = () => {
 
           <View style={{ flex: 1 }}>
             <View style={{
-              backgroundColor: secondaryColor,
-              padding: 20,
+              backgroundColor: tertiaryColor,
+              paddingLeft: Dimensions.get('window').width * 0.1,
+              paddingRight: Dimensions.get('window').width * 0.1,
+              paddingTop: Dimensions.get('window').height * 0.01,
+              marginBottom: 0,
+              paddingBottom: 0,
               alignItems: 'center',
               justifyContent: 'center',
               height: Dimensions.get('window').height * 0.15,
@@ -228,6 +233,14 @@ const AppStack = () => {
               }}>
                 Doctor Food
               </Text>
+              <Text style={{
+                color: 'white',
+                fontSize: Dimensions.get('window').width * 0.04,
+                fontFamily: 'sans-serif'
+              }}>
+                Version 1.0.0
+              </Text>
+
             </View>
 
 
@@ -248,7 +261,7 @@ const AppStack = () => {
               />
               <DrawerItem
                 label="Profile"
-                key = "Profile"
+                key="Profile"
                 labelStyle={styles.drawerLabel}
                 icon={({ focused, color, size }) => (
                   <MaterialCommunityIcons
@@ -260,12 +273,12 @@ const AppStack = () => {
                 onPress={() => navigation.navigate('Profile')}
               />
               <DrawerItem
-                label="BMI"
-                key = "BMI"
+                label="BMI Calculator"
+                key="BMI"
                 labelStyle={styles.drawerLabel}
                 icon={({ focused, color, size }) => (
                   <MaterialCommunityIcons
-                    name={focused ? 'book' : 'book-outline'}
+                    name={focused ? 'calculator' : 'calculator'}
                     size={size}
                     color='white'
                   />
@@ -274,11 +287,11 @@ const AppStack = () => {
               />
               <DrawerItem
                 label="Intake Note"
-                key = "IntakeNote"
+                key="IntakeNote"
                 labelStyle={styles.drawerLabel}
                 icon={({ focused, color, size }) => (
                   <MaterialCommunityIcons
-                    name={focused ? 'book' : 'book-outline'}
+                    name={focused ? 'book-open-variant' : 'book-open-page-variant'}
                     size={size}
                     color='white'
                   />
@@ -286,15 +299,29 @@ const AppStack = () => {
                 onPress={() => navigation.navigate('IntakeNote')}
               />
 
+              <DrawerItem
+                label="Saved"
+                key="Savednotes"
+                labelStyle={styles.drawerLabel}
+                icon={({ focused, color, size }) => (
+                  <MaterialCommunityIcons
+                    name={focused ? 'bookmarks' : 'bookmark-outline'}
+                    size={size}
+                    color='white'
+                  />
+                )}
+                onPress={() => navigation.navigate('Saved')}
+              />
+
               {
                 userInfo.role === 'admin' ? (
                   <DrawerItem
                     label="Admin Board"
-                    key = "Admin"
+                    key="Admin"
                     labelStyle={styles.drawerLabel}
                     icon={({ focused, color, size }) => (
                       <MaterialCommunityIcons
-                        name={focused ? 'book' : 'book-outline'}
+                        name={focused ? 'lock' : 'lock'}
                         size={size}
                         color='white'
                       />
@@ -304,17 +331,54 @@ const AppStack = () => {
                 ) : null
               }
 
+
+              <DrawerItem
+                label="Invtie Friends"
+                key="InvtieFriends"
+                labelStyle={styles.drawerLabel}
+                icon={({ focused, color, size }) => (
+                  <MaterialCommunityIcons
+                    name={focused ? 'account-plus' : 'account-plus-outline'}
+                    size={size}
+                    color='white'
+                  />
+                )}
+                onPress={() => {
+                  Share.share({
+                    message: `Hey check out this amazing app for health and fitness on Doctor Food App.` + ` \n\nDownload it from` + `\n https://play.google.com/store/apps/details?id=com.doctorfood`,
+                  });
+                }
+                }
+              />
+
+              <DrawerItem
+                label="App Features"
+                key="AppFeatures"
+                labelStyle={styles.drawerLabel}
+                icon={({ focused, color, size }) => (
+                  <MaterialCommunityIcons
+                    name={focused ? 'creation' : 'creation'}
+                    size={size}
+                    color='white'
+                  />
+                )}
+                onPress={() => Alert.alert('App Features', 'This app is designed to help you to maintain your health and fitness.')}
+              />
+
             </DrawerContentScrollView>
 
             <TouchableOpacity
-              style={{ backgroundColor: secondaryColor,
-                padding: 10,
+              style={{
+                backgroundColor: tertiaryColor,
+                padding: Dimensions.get('window').width * 0.001,
                 alignItems: 'center',
                 justifyContent: 'center',
-               }}
-              onPress={() => logout()}
+              }}
+              onPress={() => handleLogout()}
             >
-              <View style={{ padding: 16 }}>
+              <View style={{
+                padding: Dimensions.get('window').width * 0.03
+              }}>
 
                 <Text style={{ color: 'white', fontSize: Dimensions.get('window').width * 0.05 }}>
                   <MaterialCommunityIcons
@@ -336,46 +400,6 @@ const AppStack = () => {
             drawerIcon: ({ focused, size }) => (
               <MaterialCommunityIcons
                 name={focused ? 'home' : 'home-outline'}
-                size={size}
-              />
-            ),
-          }}
-        />
-        <Drawer.Screen
-          name="Profile"
-          component={ProfileScreens}
-          options={{
-            headerShown: false,
-            drawerIcon: ({ focused, size }) => (
-              <MaterialCommunityIcons
-                name={focused ? 'account' : 'account-outline'}
-                size={size}
-              />
-            ),
-          }}
-        />
-        <Drawer.Screen
-          name="BMI"
-          component={BMISceeens}
-          options={{
-            headerShown: false,
-            drawerIcon: ({ focused, size }) => (
-              <MaterialCommunityIcons
-                name={focused ? 'book' : 'book-outline'}
-                size={size}
-              />
-            ),
-          }}
-        />
-
-        <Drawer.Screen
-          name="IntakeNote"
-          component={IntakeNoteSceen}
-          options={{
-            headerShown: false,
-            drawerIcon: ({ focused, size }) => (
-              <MaterialCommunityIcons
-                name={focused ? 'book' : 'book-outline'}
                 size={size}
               />
             ),
@@ -419,7 +443,7 @@ const styles = {
 
   drawerLabel: {
     color: 'white',
-    fontSize: Dimensions.get('window').width * 0.05,
+    fontSize: Dimensions.get('window').width * 0.04,
     fontFamily: 'sans-serif',
 
   }

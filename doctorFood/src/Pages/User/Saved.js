@@ -8,13 +8,13 @@ import { AuthContext } from  '../../components/AuthContext';
 
 const secondaryColor = '#0d294f';
 
-const Home = () => {
+const Saved = () => {
 
-  const { BASE_URL } = useContext(AuthContext)
+  const { BASE_URL , userInfo } = useContext(AuthContext)
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    getDiseases();
+    getSavedDiseases();
 
     setTimeout(() => {
       setRefreshing(false);
@@ -24,14 +24,14 @@ const Home = () => {
 
 
   useEffect(() => {
-    const interval = setInterval(getDiseases, 30000);
-    getDiseases();
+    const interval = setInterval(getSavedDiseases, 30000);
+    getSavedDiseases();
     return () => clearInterval(interval);
   }, []);
 
-  const getDiseases = async () => {
+  const getSavedDiseases = async () => {
     try {
-      axios.get(`${BASE_URL}diseases/`)
+      axios.get(`${BASE_URL}users/saved/${userInfo._id}`)
         .then(function (response) {
           setCards(response.data);
         })
@@ -42,6 +42,7 @@ const Home = () => {
       console.log(error);
     }
   };
+
 
   const [refreshing, setRefreshing] = useState(false);
  const [cards, setCards] = useState([]);
@@ -125,14 +126,11 @@ const Home = () => {
 
         ))}
       </View>
-
-
-
     </ScrollView>
   );
 };
 
-export default Home;
+export default Saved;
 
 const styles = StyleSheet.create({
 
